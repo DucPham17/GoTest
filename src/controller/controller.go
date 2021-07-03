@@ -1,13 +1,16 @@
 package controller
 
 import (
-	"github.com/DucPham17/GoTest/entity"
-	"github.com/DucPham17/GoTest/service"
+	"gotest/src/entity"
+	"gotest/src/service"
+	"gotest/src/validators"
+
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type Controller interface {
-	Save() entity.Video
+	Save(ctx *gin.Context) error
 	FindAll() []entity.Video
 }
 
@@ -15,17 +18,28 @@ type controller struct {
 	videoService service.VideoService
 }
 
+var validate *validator.Validate
+
 func New(service service.VideoService) Controller {
+	validate = validator.New()
+	validate.RegisterValidation("is-cool", validators.ValidatorField)
 	return &controller{
 		videoService: service,
 	}
 }
 
-func (con *controller) Save(ctx *gin.Context) entity.Video {
+func (con *controller) Save(ctx *gin.Context) error {
 	var video entity.Video
-	ctx.BindJSON(&video)
+	er := ctx.ShouldBindJSON(&video)
+	if er != nil {
+		return er
+	}
+	er = validate.Struct(video)
+	if er != nil {
+		return er
+	}
 	con.videoService.Save(video)
-	return video
+	return nil
 }
 
 func (con *controller) FindAll() []entity.Video {

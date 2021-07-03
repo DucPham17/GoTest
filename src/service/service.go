@@ -1,6 +1,6 @@
 package service
 
-import "github.com/DucPham17/GoTest/entity"
+import "gotest/src/entity"
 
 type VideoService interface {
 	Save(entity.Video) entity.Video
