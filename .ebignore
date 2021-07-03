@@ -1,0 +1,9 @@
+src/controller/
+src/entity/
+src/middlewares/
+src/service/
+src/validators/
+main.go
+go.mod
+go.sum
+Dockerfile
